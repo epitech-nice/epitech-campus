@@ -22,9 +22,31 @@
 # THE SOFTWARE.
 ##
 
-app = angular.module('app', ['ngRoute']);
+app = angular.module('app', ['ngRoute', 'ui.bootstrap', 'ngProgress']);
 
 app.config ['$locationProvider', '$routeProvider', ($locationProvider, $routeProvider) ->
-	#$routeProvider.when('/', {templateUrl: ""});
+	$routeProvider.when('/:cityCode*/netsoul', {controller:"NetsoulPageController", templateUrl: "templates/netsoul.tpl.html"});
+	$routeProvider.when('/:cityCode*/susies', {controller: SusiesPageController, templateUrl: "templates/susies.tpl.html"});
+	$routeProvider.when('/:cityCode*/roadblocks', {controller: RoadBlocksPageController, templateUrl: "templates/roadBlocks.tpl.html"});
+	$routeProvider.when('/error', {templateUrl: "templates/error.tpl.html"});
+	$routeProvider.when('/:cityCode*/?', {controller:"HomePageController", templateUrl: "templates/home.tpl.html"});
+	$routeProvider.when('/', {controller:"HomePageController", templateUrl: "templates/home.tpl.html"});
 	$locationProvider.html5Mode(true);
 ]
+
+app.service 'config', ConfigServiceController
+app.service 'city', CityServiceController
+app.factory 'wsEpitech', ['$injector', ($injector) -> $injector.instantiate(WsEpitechServiceController, {'wsUrl':'http://archlinux:4343'}) ];
+app.controller 'HeaderController', HeaderController
+
+app.controller 'HomePageController', HomePageController
+app.controller 'NetsoulPageController', NetsoulPageController
+app.controller 'RoadBlocksPageController', RoadBlocksPageController
+
+
+app.directive 'halloffame', () -> {scope: {login: '=', picture: '=', offset: '=', total: '=', icon: '='}, templateUrl: 'templates/hallOfFame.tpl.html'}
+app.filter 'hallOfFameTime', () -> (total) ->
+	hours = Math.floor(total / 3600)
+	mins = Math.floor(total / 60) - hours * 60
+	secs = Math.floor(total % 60)
+	return "#{hours}h #{mins}m #{secs}s"
