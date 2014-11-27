@@ -34,11 +34,11 @@ class CityServiceController
 	onCityChange: (cb) -> @$rootScope.$on(@constructor.EVENT_CITY_CHANGE, cb);
 
 	changeCity: (cityCode) ->
-		@wsEpitech.getCity(cityCode).then () =>
-			oldCity = @city
+		@wsEpitech.getCities().then (cities) =>
+			if (!_.contains(cities, cityCode)) then throw new Error("Citie doesn't exist")
+			bool = (cityCode != @city)
 			@city = cityCode;
-			if (oldCity != @city) then @$rootScope.$emit(@constructor.EVENT_CITY_CHANGE);
-
+			if (bool) then @$rootScope.$emit(@constructor.EVENT_CITY_CHANGE);
 
 	getUsers: () -> @wsEpitech.getCityUsers(@city);
 	getNetsoul: () -> @wsEpitech.getCityNetsoul(@city);

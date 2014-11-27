@@ -27,7 +27,7 @@ class WsEpitechServiceController
 
 	constructor: (@$http, @config) ->
 
-	getCity: (cityCode) -> @_get("#{cityCode}");
+	getCities: () -> @_get("cities");
 	getCityUsers: (cityCode) -> @_get("#{cityCode}/users");
 	getCityNetsoul: (cityCode) -> @_get("#{cityCode}/netsoul");
 	getCityNsLog: (cityCode, start, end) -> @_get("#{cityCode}/nslog?start=#{start}&end=#{end}")
