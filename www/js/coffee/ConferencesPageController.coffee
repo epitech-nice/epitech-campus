@@ -1,9 +1,8 @@
-class SusiesPageController
+class ConferencesPageController
 
-	@$inject = ['$scope', 'config', 'city', 'wsEpitech', 'ngProgress']
-	constructor: (@$scope, @config, @cityService, @wsEpitech, @ngProgress) ->
-		@toDo = @config.getSusieToDo(@cityService.getCode())
-		@$scope.toDo = @toDo;
+	@$inject = ['$scope', 'city', 'wsEpitech', 'ngProgress']
+
+	constructor: (@$scope, @cityService, @wsEpitech, @ngProgress) ->
 		@$scope.filters = {};
 		@$scope.filters.promo = false;
 		@$scope.filters.login = '';
@@ -15,19 +14,24 @@ class SusiesPageController
 		p = @cityService.getUsers().then (users) =>
 			@users = @buildUsers(users);
 			@$scope.promos = @buildPromo(@users);
-			@wsEpitech.getCalendarPresent(@config.getSusieCalendarId(@cityService.getCode())).then (data) =>
-				for login, user of @users
-					user.nbSusies = if (data[login]?) then data[login].total_present else 0;
-					toDo = if (@toDo[user.promo]?) then @toDo[user.promo] else 0;
-					user.toDo = Math.max(0, toDo - user.nbSusies);
-				@applyFilters();
-				@ngProgress.complete();
+			@getConferanceModule().then (module) =>
+				@wsEpitech.getModulePresent(module.scholaryear, module.moduleCode, module.instanceCode).then (data) =>
+					for login, user of @users
+						user.registered = data[login]?;
+						user.nbPresent = if (data[login]?) then data[login].total_present else 0;
+						user.nbAbsent = if (data[login]?) then data[login].total_absent else 0;
+					@applyFilters();
+					@ngProgress.complete();
 		p.catch () => @ngProgress.stop();
 
 	buildUsers: (users) ->
 		users = _.filter(users, (u) -> u.promo != "ADM")
 		_.object(_.pluck(users, 'login'), users)
 	buildPromo: (user) -> _.chain(user).pluck('promo').uniq().sort().reverse().value();
+
+	getConferanceModule: () ->
+		@wsEpitech.getCityModules(@cityService.getCode()).then (modules) ->
+			m = _.chain(modules).filter((m) -> m.moduleCode == "G-EPI-007").sortBy((m) -> -m.scholaryear).first().value();
 
 	applyFilters: () =>
 		@$scope.users = _.filter @users, (user) =>

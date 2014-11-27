@@ -24,8 +24,8 @@
 
 class NetsoulPageController
 
-	@$inject = ['$scope', '$routeParams', '$location', 'city', 'wsEpitech', 'ngProgress']
-	constructor: (@$scope, @$routeParams, @$location, @cityService, @wsEpitech, @ngProgress) ->
+	@$inject = ['$scope', 'city', 'wsEpitech', 'ngProgress', '$q']
+	constructor: (@$scope, @cityService, @wsEpitech, @ngProgress, $q) ->
 		@users = {}
 		@netsoul = {}
 		@$scope.netsoul = [];
@@ -34,16 +34,11 @@ class NetsoulPageController
 		@$scope.$watch('filters', @applyFilters, true);
 
 		@ngProgress.start();
-		p = @cityService.changeCity(@$routeParams.cityCode).then () =>
-			@cityService.getUsers().then (users) =>
-				@users = @buildUsers(users);
-				@$scope.filters.promos = @buildPromos(users);
-				@refreshNetsoul();
-				@refreshHallOfFame();
-				@ngProgress.complete();
-		p.catch () =>
-			@ngProgress.stop()
-			@$location.url('/error');
+		p = @cityService.getUsers().then (users) =>
+			@users = @buildUsers(users);
+			@$scope.filters.promos = @buildPromos(users);
+			$q.all([@refreshNetsoul(), @refreshHallOfFame()]).then () => @ngProgress.complete();
+		p.catch () => @ngProgress.stop()
 
 	buildUsers: (users) ->	_.object(_.pluck(users, 'login'), users)
 	buildPromos: (users) -> _.object(_.uniq(_.pluck(users, 'promo')), []);

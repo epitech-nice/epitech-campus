@@ -1,8 +1,16 @@
 class ConfigServiceController
-	constructor: () ->
+
+	@$inject = ['$http']
+
+	constructor: (@$http) ->
 		@config = {}
+		@promise = @load();
 
-	getSusieCalendarId: (cityCode) ->
-		return 1934
+	load: () ->
+		if (@promise?) then @promise;
+		@$http.get('config.json').then (data) =>
+			@config = data.data
 
-	getSusieToDo: (cityCode) -> {2017: 17, 2018:100000, 2019: 31}
+	getWsUrl: () -> @config['ws-epitech']
+	getSusieCalendarId: (cityCode) -> @config.cities[cityCode].susieCalendarId
+	getSusieToDo: (cityCode) -> @config.cities[cityCode].susieToDo

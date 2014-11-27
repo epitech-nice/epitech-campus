@@ -23,10 +23,11 @@
 ##
 
 class WsEpitechServiceController
-	@$inject = ['$http', 'wsUrl']
+	@$inject = ['$http', 'config']
 
-	constructor: (@$http, @wsUrl) ->
+	constructor: (@$http, @config) ->
 
+	getCity: (cityCode) -> @_get("#{cityCode}");
 	getCityUsers: (cityCode) -> @_get("#{cityCode}/users");
 	getCityNetsoul: (cityCode) -> @_get("#{cityCode}/netsoul");
 	getCityNsLog: (cityCode, start, end) -> @_get("#{cityCode}/nslog?start=#{start}&end=#{end}")
@@ -36,11 +37,14 @@ class WsEpitechServiceController
 		@_get(url)
 
 	getModuleRegistered: (year, moduleCode, instanceCode) -> @_get("module/#{year}/#{moduleCode}/#{instanceCode}/registered")
+	getModulePresent: (year, moduleCode, instanceCode) -> @_get("module/#{year}/#{moduleCode}/#{instanceCode}/present")
+	getModuleActivities: (year, moduleCode, instanceCode) -> @_get("module/#{year}/#{moduleCode}/#{instanceCode}/activities")
 
 	getCalendarPresent: (calendarId) -> @_get("calendar/#{calendarId}/present")
 
 	_get: (path) ->
-		return @$http.get("#{@wsUrl}/#{path}").then (httpRes) ->
+		wsUrl = @config.getWsUrl()
+		return @$http.get("#{wsUrl}/#{path}").then (httpRes) ->
 			data = httpRes.data;
 			if (data.code != 200) then throw data.msg;
 			return data.data;

@@ -24,29 +24,46 @@
 
 app = angular.module('app', ['ngRoute', 'ui.bootstrap', 'ngProgress']);
 
+loader = ['config', 'city', '$route', (config, city, $route) ->
+	config.load().then () ->
+		params = $route.current.params
+		if params.country && params.city
+			city.changeCity("#{params.country}/#{params.city}")
+]
+
+resolver = {Loader: loader}
+
 app.config ['$locationProvider', '$routeProvider', ($locationProvider, $routeProvider) ->
-	$routeProvider.when('/:cityCode*/netsoul', {controller:"NetsoulPageController", templateUrl: "templates/netsoul.tpl.html"});
-	$routeProvider.when('/:cityCode*/susies', {controller: SusiesPageController, templateUrl: "templates/susies.tpl.html"});
-	$routeProvider.when('/:cityCode*/roadblocks', {controller: RoadBlocksPageController, templateUrl: "templates/roadBlocks.tpl.html"});
+	$routeProvider.when('/:country/:city/conferences', {controller: ConferencesPageController, templateUrl: "templates/conferences.tpl.html", resolve: resolver});
+	$routeProvider.when('/:country/:city/netsoul', {controller: NetsoulPageController, templateUrl: "templates/netsoul.tpl.html", resolve: resolver});
+	$routeProvider.when('/:country/:city/susies', {controller: SusiesPageController, templateUrl: "templates/susies.tpl.html", resolve: resolver});
+	$routeProvider.when('/:country/:city/roadblocks', {controller: RoadBlocksPageController, templateUrl: "templates/roadBlocks.tpl.html", resolve: resolver});
+	$routeProvider.when('/:country/:city/projects', {controller: ProjectsPageController, templateUrl: "templates/projects.tpl.html", resolve: resolver});
 	$routeProvider.when('/error', {templateUrl: "templates/error.tpl.html"});
-	$routeProvider.when('/:cityCode*/?', {controller:"HomePageController", templateUrl: "templates/home.tpl.html"});
-	$routeProvider.when('/', {controller:"HomePageController", templateUrl: "templates/home.tpl.html"});
+	$routeProvider.when('/:country/:city/?', {controller: HomePageController , templateUrl: "templates/home.tpl.html", resolve: resolver});
+	$routeProvider.when('/', {controller: HomePageController, templateUrl: "templates/home.tpl.html"});
+	$routeProvider.otherwise({templateUrl: "templates/error.tpl.html"});
 	$locationProvider.html5Mode(true);
 ]
 
 app.service 'config', ConfigServiceController
 app.service 'city', CityServiceController
-app.factory 'wsEpitech', ['$injector', ($injector) -> $injector.instantiate(WsEpitechServiceController, {'wsUrl':'http://archlinux:4343'}) ];
+app.service 'wsEpitech', WsEpitechServiceController;
+
 app.controller 'HeaderController', HeaderController
-
-app.controller 'HomePageController', HomePageController
-app.controller 'NetsoulPageController', NetsoulPageController
-app.controller 'RoadBlocksPageController', RoadBlocksPageController
-
-
 app.directive 'halloffame', () -> {scope: {login: '=', picture: '=', offset: '=', total: '=', icon: '='}, templateUrl: 'templates/hallOfFame.tpl.html'}
+app.directive 'project', () -> {scope: {project: '='}, controller: ProjectDirectiveController, replace: true, templateUrl: 'templates/projectDirective.tpl.html', restrict: 'E'}
+
 app.filter 'hallOfFameTime', () -> (total) ->
 	hours = Math.floor(total / 3600)
 	mins = Math.floor(total / 60) - hours * 60
 	secs = Math.floor(total % 60)
 	return "#{hours}h #{mins}m #{secs}s"
+
+app.filter 'padding', () -> (nb) ->
+	nb = parseInt(nb)
+	if (nb < 10) then return "0#{nb}"
+	return nb;
+
+app.run ($rootScope, $location) ->
+	$rootScope.$on '$routeChangeError', (e) -> $location.url('/error');

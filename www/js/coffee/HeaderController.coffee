@@ -6,8 +6,8 @@ class HeaderController
 		@cityService.onCityChange(@onCityChanged);
 		@$scope.onCitySelect = @onCitySelect;
 		@onCityChanged();
-		@$scope.menu = {'netsoul': 'Netsoul'};
-		@$scope.menuModule = {'susies': 'Susies', 'roadblocks': 'Road-Blocks'};
+		@$scope.menu = {'netsoul': 'Netsoul', 'projects': 'Projects'};
+		@$scope.menuModule = {'susies': 'Susies', 'conferences': 'Conferences', 'roadblocks': 'Road-Blocks'};
 		@$scope.page = @getCurrentPage();
 		@$rootScope.$on('$routeChangeSuccess', @onPageChange);
 

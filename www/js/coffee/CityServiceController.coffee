@@ -31,13 +31,10 @@ class CityServiceController
 		@city = null;
 
 	getCode: () -> @city
-	onCityChange: (cb) ->
-		@$rootScope.$on(@constructor.EVENT_CITY_CHANGE, cb);
+	onCityChange: (cb) -> @$rootScope.$on(@constructor.EVENT_CITY_CHANGE, cb);
 
 	changeCity: (cityCode) ->
-		defer = @$q.defer()
-		defer.resolve(true);
-		return defer.promise.then () =>
+		@wsEpitech.getCity(cityCode).then () =>
 			oldCity = @city
 			@city = cityCode;
 			if (oldCity != @city) then @$rootScope.$emit(@constructor.EVENT_CITY_CHANGE);
@@ -46,3 +43,16 @@ class CityServiceController
 	getUsers: () -> @wsEpitech.getCityUsers(@city);
 	getNetsoul: () -> @wsEpitech.getCityNetsoul(@city);
 	getModules: (year = null) -> @wsEpitech.getCityModules(@city, year);
+	getProjects: () -> @getModules().then (modules) =>
+		scholarYear = _.max(modules, (m) -> m.scholaryear).scholaryear;
+		modules = _.filter(modules, (m) -> m.scholaryear == scholarYear)
+		projects = []
+		promises = []
+		for m in modules
+			do (m) =>
+				promises.push @wsEpitech.getModuleActivities(m.scholaryear, m.moduleCode, m.instanceCode).then (activities) ->
+					for act in activities
+						if act.type == "proj"
+							act.module = m
+							projects.push act;
+		@$q.all(promises).then () -> projects;

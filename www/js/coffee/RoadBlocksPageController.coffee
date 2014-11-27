@@ -1,6 +1,6 @@
 class RoadBlocksPageController
 
-	@$inject = ['$scope', '$routeParams', '$location', '$q', 'ngProgress', 'city', 'wsEpitech']
+	@$inject = ['$scope', '$q', 'ngProgress', 'city', 'wsEpitech']
 
 	@ROADBLOCKS = [
 		{code: 'B-ANG-084', name: 'TOEIC 550'},
@@ -13,7 +13,7 @@ class RoadBlocksPageController
 		{code: 'B-BDD-350', name: 'SQL'}
 	]
 	@FRENCH_ROADBLOCKS = ['B-PRO-050', 'B-PRO-125', 'B-PRO-360', 'B-PRO-460', 'B-PRO-540'];
-	constructor: (@$scope, $routeParams, $location, @$q, ngProgress, @cityService, @wsEpitech) ->
+	constructor: (@$scope, @$q, ngProgress, @cityService, @wsEpitech) ->
 		@users = {};
 		@$scope.promo = [];
 		@$scope.users = [];
@@ -22,20 +22,18 @@ class RoadBlocksPageController
 		@$scope.roadBlocks = @constructor.ROADBLOCKS;
 
 		ngProgress.start();
-		p = @cityService.changeCity($routeParams.cityCode).then () =>
-			@cityService.getUsers().then (users) =>
-				@users = @buildUsers(users);
-				@$scope.promos = @buildPromo(users);
-				@cityService.getModules().then (modules) =>
-					@loadGrades(modules).then () =>
-						@applyFilters();
-						ngProgress.complete();
-		p.catch () =>
-			ngProgress.stop();
-			#$location.url('/error');
+		p = @cityService.getUsers().then (users) =>
+			@users = @buildUsers(users);
+			@$scope.promos = @buildPromo(@users);
+			@cityService.getModules().then (modules) =>
+				@loadGrades(modules).then () =>
+					@applyFilters();
+					ngProgress.complete();
+		p.catch () => ngProgress.stop();
 
 	buildUsers: (users) ->
-		tab = _.object(_.pluck(users, 'login'), users)
+		users = _.filter(users, (u) -> u.promo != "ADM")
+		tab = _.chain(users).pluck('login').object(users).value()
 		_.each tab, (user) -> user.barrages = {}
 		return tab;
 	buildPromo: (user) -> _.chain(user).pluck('promo').uniq().sort().reverse().value();
@@ -47,7 +45,7 @@ class RoadBlocksPageController
 		promises = []
 		for module in modules
 			do (module) =>
-				promises.push @wsEpitech.getModuleRegistered(module.scolaryear, module.moduleCode, module.instanceCode).then (registered) =>
+				promises.push @wsEpitech.getModuleRegistered(module.scholaryear, module.moduleCode, module.instanceCode).then (registered) =>
 					for login, data of registered
 						if (data.grade != '-' && data.grade != 'Echec' && @users[login]?)
 							@users[login].barrages[module.moduleCode] = true;

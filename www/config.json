@@ -1,0 +1,13 @@
+{
+    "ws-epitech": "http://archlinux:4343",
+    "cities": {
+	"FR/NCE": {
+	    "susieCalendarId": 1934,
+	    "susieToDo": {"2017": 17, "2018":100000, "2019": 31}
+	},
+	"FR/MPL": {
+	    "susieCalendarId": 0,
+	    "susieToDo": {"2017": 0, "2018":0, "2019": 0}
+	}
+    }
+}

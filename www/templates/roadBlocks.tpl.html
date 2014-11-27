@@ -80,17 +80,9 @@
 	    </a>
 	  </td>
 	  <td ng-class="{roadBlockOk: user.barrages.french >=2, roadBlockKo: user.barrages.french == 0, roadBlockProgress: user.barrages.french == 1}">
-	  <!--
-	  <? TplInclude::helper('barrageBadge', array('title'=>'TOEIC 500', 'color'=>$s->getBarrage(Barrage::TOEIC500))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'QCM CUI', 'color'=>$s->getBarrage(Barrage::QCMCULTUREINFO))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'TOEIC 600', 'color'=>$s->getBarrage(Barrage::TOEIC600))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'Exam Tek2', 'color'=>$s->getBarrage(Barrage::EXAMTEK2))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'TOEIC 750', 'color'=>$s->getBarrage(Barrage::TOEIC750))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'Exam Reseau', 'color'=>$s->getBarrage(Barrage::EXAMRESEAU))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'Conferences', 'color'=>$s->getBarrage(Barrage::CONFERENCE))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'SQL', 'color'=>$s->getBarrage(Barrage::SQL))) ?>
-	  <? TplInclude::helper('barrageBadge', array('title'=>'Francais', 'color'=>$s->getBarrage(Barrage::FRANCAIS))) ?>
-	  -->
+	    <a href="#" tooltip="French" style="display:inline-block; width:100%; height: 100%" >
+	    </a>
+	  </td>
 	</tr>
       </tbody>
     </table>
