@@ -92,7 +92,6 @@ app.filter('padding', PaddingFilter.factory)
 
 app.run(['$rootScope', '$location', 'city', ($rootScope, $location, city) ->
 	$rootScope.$on('$routeChangeError', (e) ->
-		console.log(city.getCode());
 		if (city.getCode()?)
 			$location.url("/#{city.getCode()}/error");
 		else
