@@ -1,11 +1,11 @@
 {
-    "name": "Pedatools",
+    "name": "Epitech Campus",
     "version": "",
     "author": "Jerome Quere <contact@jeromequere.com>",
     "description": "",
     "repository": {
         "type" : "git",
-        "url" : "https://github.com/epitech-nice/pedatools"
+        "url" : "https://github.com/epitech-nice/epitech-campus"
     },
     "devDependencies": {
         "gulp": "*",

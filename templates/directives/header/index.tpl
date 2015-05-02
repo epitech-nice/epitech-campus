@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/{{cityCode}}">Pedatools 0.2</a>
+            <a class="navbar-brand" href="/{{cityCode}}">Epitech Campus 0.2</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
