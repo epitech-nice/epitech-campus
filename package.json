@@ -1,0 +1,23 @@
+{
+    "name": "Pedatools",
+    "version": "",
+    "author": "Jerome Quere <contact@jeromequere.com>",
+    "description": "",
+    "repository": {
+        "type" : "git",
+        "url" : "https://github.com/epitech-nice/pedatools"
+    },
+    "devDependencies": {
+        "gulp": "*",
+        "gulp-coffee": "*",
+        "gulp-concat": "*",
+        "gulp-connect": "*",
+        "gulp-sass": "*",
+        "gulp-minify-css": "*",
+        "gulp-uglify": "*",
+        "connect-modrewrite": "*",
+        "del": "*",
+        "beepbeep": "*",
+        "gulp-order": "*"
+    }
+}

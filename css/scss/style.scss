@@ -1,0 +1,30 @@
+
+@import "ngProgress.scss";
+@import "pages/roadBlock/style.scss";
+@import "pages/projects/style.scss";
+
+h1
+{
+	 @extend .center;
+}
+
+.center
+{
+    text-align: center;
+}
+
+.right
+{
+  text-align: right;
+}
+
+// Required by Angular bootstrap
+.nav, .pagination, .carousel, .panel-title a
+{
+  cursor: pointer;
+}
+
+
+h4 .label {
+    font-size: 10px;
+}
